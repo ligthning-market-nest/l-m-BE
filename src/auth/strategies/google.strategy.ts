@@ -22,12 +22,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         profile: Profile,
     ): Promise<GoogleProfileDto> {
         const email = profile.emails?.[0]?.value ?? '';
-        const nickname = profile.displayName || email.split('@')[0] || 'user';
 
         return {
             googleId: profile.id,
             email,
-            nickname,
         };
     }
 }

@@ -1,4 +1,3 @@
-/*
 declare module 'passport-jwt' {
   import { Request } from 'express';
 
@@ -19,4 +18,3 @@ declare module 'passport-jwt' {
     fromAuthHeaderAsBearerToken(): (request: Request) => string | null;
   };
 }
-*/

@@ -5,7 +5,7 @@ export class JwtPayloadDto {
 
     email: string;
 
-    nickname: string;
+    nickname: string | null;
 
     authMethod: AuthMethod;
 }
