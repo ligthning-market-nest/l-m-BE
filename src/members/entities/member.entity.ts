@@ -17,8 +17,8 @@ export class Member {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  nickname: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  nickname: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   email: string;
@@ -35,7 +35,7 @@ export class Member {
   @Column({
     type: 'enum',
     enum: ConnectionStatus,
-    default: ConnectionStatus.Offline,
+    default: ConnectionStatus.OFFLINE,
   })
   connectionStatus: ConnectionStatus;
 
