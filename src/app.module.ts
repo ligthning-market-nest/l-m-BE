@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { typeOrmAsyncOptions } from './config/typeorm.config';
+import { ItemModule } from './Items/item.module';
+import { TradeModule } from './trades/trade.module';
 
 @Module({
     imports: [
@@ -14,6 +16,8 @@ import { typeOrmAsyncOptions } from './config/typeorm.config';
         }),
         TypeOrmModule.forRootAsync(typeOrmAsyncOptions),
         AuthModule,
+        ItemModule,
+        TradeModule,
     ],
     controllers: [AppController],
     providers: [AppService],
