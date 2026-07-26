@@ -79,7 +79,7 @@ export class ChatController {
         return this.chatService.updateStatus(request.user.memberId, id, body.status);
     }
 
-    
+
 
     @Delete(':id')
     remove(

@@ -48,7 +48,7 @@ export class Chatroom {
 
     @Column({ type: 'enum', enum: ChatroomStatus, default: ChatroomStatus.WAITING })
     status: ChatroomStatus;
-    
+
 
     @OneToMany(() => ChatMessage, (message) => message.chatroom, { cascade: true })
     messages: ChatMessage[];
@@ -58,6 +58,5 @@ export class Chatroom {
 
     @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
     updatedAt: Date;
-    
-}
 
+}

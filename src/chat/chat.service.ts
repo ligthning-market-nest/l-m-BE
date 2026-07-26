@@ -103,8 +103,8 @@ export class ChatService {
     async remove(memberId: number, id: number): Promise<{ message: string }> {
         const chatroom = await this.findParticipatingChatroom(memberId, id);
         await this.chatRepository.remove(chatroom);
-        
-        return { message: "채팅방이 삭제되었습니다." }
+
+        return { message: '채팅방이 삭제되었습니다.' };
     }
 
 

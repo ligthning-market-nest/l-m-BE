@@ -98,7 +98,7 @@ export class ChatGateway implements OnGatewayConnection {
         }
 
         const authorization = client.handshake.headers.authorization;
-        
+
         if (authorization?.startsWith('Bearer ')) {
             return authorization.slice(7);
         }
@@ -128,7 +128,7 @@ export class ChatGateway implements OnGatewayConnection {
         if (error instanceof HttpException) {
             return new WsException(error.message);
         }
-        
+
         return new WsException('채팅 처리 중 오류가 발생했습니다.');
     }
 }
