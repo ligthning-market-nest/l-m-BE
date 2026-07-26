@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 import { typeOrmAsyncOptions } from './config/typeorm.config';
 import { ItemModule } from './Items/item.module';
 import { TradeModule } from './trades/trade.module';
@@ -18,6 +19,7 @@ import { TradeModule } from './trades/trade.module';
         AuthModule,
         ItemModule,
         TradeModule,
+        ChatModule,
     ],
     controllers: [AppController],
     providers: [AppService],
