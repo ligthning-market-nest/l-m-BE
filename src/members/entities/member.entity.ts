@@ -39,6 +39,18 @@ export class Member {
   })
   connectionStatus: ConnectionStatus;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  introduction: string | null;
+
+  @Column({ name: 'token_balance', type: 'int', default: 1000 })
+  tokenBalance: number;
+
+  @Column({ name: 'nickname_updated_at', type: 'datetime', nullable: true })
+  nicknameUpdatedAt: Date | null;
+
+  @Column({ name: 'introduction_updated_at', type: 'datetime', nullable: true })
+  introductionUpdatedAt: Date | null;
+
   @CreateDateColumn()
   createdAt: Date;
 
