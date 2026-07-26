@@ -30,6 +30,7 @@ export class ItemService {
                 description: request.description.trim(),
                 price: request.price,
                 category: request.category,
+                stock: request.stock,
                 tags: request.tags,
                 directTrade: request.directTrade,
             },

@@ -34,7 +34,7 @@ export class SellRequest {
 
     @IsInt()
     @Min(1)
-    @MaxLength(2_147_483_647)
+    @Max(2_147_483_647)
     price: number;
 
     @IsEnum(Category)
@@ -47,7 +47,7 @@ export class SellRequest {
 
     @IsArray()
     @ArrayMaxSize(10)
-    @IsString()
+    @IsString({ each: true })
     @MaxLength(15, { each: true })
     tags: string[];
 

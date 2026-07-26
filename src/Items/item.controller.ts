@@ -66,7 +66,7 @@ export class ItemController {
     @Delete(':id')
     delete(
         @Req() request: AuthenticatedRequest,
-        @Param(':id', ParseIntPipe) id: number,    
+        @Param('id', ParseIntPipe) id: number,
     ): Promise<{ message: string }> {
         return this.itemService.remove(request.user.memberId,id);
     }

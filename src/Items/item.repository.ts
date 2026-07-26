@@ -25,7 +25,7 @@ export class ItemRepository {
             const item = manager.create(Item, {
                 ...itemData,
                 sellerId: seller.id,
-                seller, //seller: seller 축약
+                seller,
             });
 
             const saveItem = await manager.save(Item, item);
