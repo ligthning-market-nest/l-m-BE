@@ -13,4 +13,8 @@ export class AuthMemberResponseDto {
     authMethod: AuthMethod;
 
     connectionStatus: ConnectionStatus;
+
+    introduction: string | null;
+
+    tokenBalance: number;
 }

@@ -18,6 +18,7 @@ import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import { NicknameUpdate } from '../members/dto/nickname.update';
 import { MessageResponse } from './dto/message.response';
+import { PasswordChangeDto } from './dto/password-change.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -51,9 +52,8 @@ export class AuthController {
   }
 
   @Post('signup')
-  async signup(@Body() body: SignupDto, @Res() res: Response): Promise<void> {
-    this.authService.signup(body.email, body.password);
-    console.log("회원가입 성공")
+  signup(@Body() body: SignupDto): Promise<AuthResponseDto> {
+    return this.authService.signup(body.email, body.password);
   }
 
   @Post('login')
@@ -76,6 +76,27 @@ export class AuthController {
     return this.authService.updateNickname(
       request.user.memberId,
       body.nickname,
+    );
+  }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  logout(
+    @Req() request: Request & { user: { memberId: number } },
+  ): Promise<MessageResponse> {
+    return this.authService.logout(request.user.memberId);
+  }
+
+  @Patch('me/password')
+  @UseGuards(JwtAuthGuard)
+  changePassword(
+    @Req() request: Request & { user: { memberId: number } },
+    @Body() body: PasswordChangeDto,
+  ): Promise<MessageResponse> {
+    return this.authService.changePassword(
+      request.user.memberId,
+      body.currentPassword,
+      body.newPassword,
     );
   }
 }

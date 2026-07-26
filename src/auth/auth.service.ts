@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
 
   //회원 가입
-  async signup(email: string, password: string): Promise<void> {
+  async signup(email: string, password: string): Promise<AuthResponseDto> {
     //이메일 앞뒤 공백 제거하고, 소문자로
     const normalizedEmail = email.trim().toLowerCase();
 
@@ -39,6 +39,16 @@ export class AuthService {
       password,
     );
 
+    return {
+      accessToken: await this.signToken(
+        member.id,
+        member.email,
+        member.nickname,
+        member.authMethod,
+      ),
+      member: this.toMemberResponse(member),
+      isNewMember: true,
+    };
   }
 
 
@@ -109,6 +119,24 @@ export class AuthService {
     return { message: '닉네임이 변경되었습니다.' };
   }
 
+  async logout(memberId: number): Promise<MessageResponse> {
+    await this.memberService.markOffline(memberId);
+    return { message: '로그아웃되었습니다.' };
+  }
+
+  async changePassword(
+    memberId: number,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<MessageResponse> {
+    await this.memberService.changePassword(
+      memberId,
+      currentPassword,
+      newPassword,
+    );
+    return { message: '비밀번호가 변경되었습니다.' };
+  }
+
   //엑세스 토큰 검증
   async validateAccessToken(memberId: number): Promise<AuthMemberResponseDto> {
     const member = await this.memberService.findById(memberId);
@@ -140,6 +168,8 @@ export class AuthService {
     googleId: string | null;
     authMethod: 'local' | 'google';
     connectionStatus: ConnectionStatus;
+    introduction: string | null;
+    tokenBalance: number;
   }): AuthMemberResponseDto {
     return {
       id: member.id,
@@ -148,6 +178,8 @@ export class AuthService {
       googleId: member.googleId,
       authMethod: member.authMethod,
       connectionStatus: member.connectionStatus,
+      introduction: member.introduction,
+      tokenBalance: member.tokenBalance,
     };
   }
 }

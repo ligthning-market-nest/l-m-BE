@@ -1,4 +1,3 @@
-/*
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
@@ -14,4 +13,3 @@ export class PasswordProvider {
         return bcrypt.compareSync(password,hash);
     }
 }
-*/
