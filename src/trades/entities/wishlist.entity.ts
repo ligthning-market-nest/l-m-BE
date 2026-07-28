@@ -8,7 +8,7 @@ import {
     Column,
 } from 'typeorm';
 import { Item } from '../../Items/entities/item.entity';
-import { Member } from '../../members/entities/member.entity';
+import { Member } from 'src/members/entities/member.entity';
 
 @Entity('wishlists')
 @Unique('UQ_wishlists_member_item', ['memberId', 'itemId'])

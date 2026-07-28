@@ -26,6 +26,9 @@ COPY --from=build /app/package.json /app/package-lock.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 
+RUN mkdir -p /app/uploads/items \
+    && chown -R node:node /app/uploads
+
 USER node
 
 EXPOSE 3000

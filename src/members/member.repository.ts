@@ -17,31 +17,57 @@ export class MemberRepository {
         return this.repository.findOne({ where: { id } });
     }
 
+
     findByEmail(email: string): Promise<Member | null> {
         return this.repository.findOne({ where: { email } });
     }
 
+
+    //구글
     findByGoogleId(googleId: string): Promise<Member | null> {
         return this.repository.findOne({ where: { googleId } });
     }
+
+
+    //애플
+    findByAppleId(appleId: string): Promise<Member | null> {
+        return this.repository.findOne({ where: { appleId } });
+    }
+
+    //카카오
+    findByKakaoId(kakaoId: string): Promise<Member | null> {
+        return this.repository.findOne({ where: { kakaoId } });
+    }
+
+
 
     findByNickname(nickname: string): Promise<Member | null> {
         return this.repository.findOne({ where: { nickname } });
     }
 
+
+
     create(member: DeepPartial<Member>): Member {
         return this.repository.create(member);
     }
 
+
+
     save(member: DeepPartial<Member>): Promise<Member> {
         return this.repository.save(member);
     }
+
+
+
 
     findFollow(followerId: number, followingId: number): Promise<Follow | null> {
         return this.followRepository.findOne({
             where: { followerId, followingId },
         });
     }
+
+
+
 
     createFollow(follower: Member, following: Member): Promise<Follow> {
         return this.followRepository.save(
@@ -54,13 +80,19 @@ export class MemberRepository {
         );
     }
 
+
+
     removeFollow(follow: Follow): Promise<Follow> {
         return this.followRepository.remove(follow);
     }
 
+
+
     countFollowers(memberId: number): Promise<number> {
         return this.followRepository.count({ where: { followingId: memberId } });
     }
+
+
 
     countFollowing(memberId: number): Promise<number> {
         return this.followRepository.count({ where: { followerId: memberId } });

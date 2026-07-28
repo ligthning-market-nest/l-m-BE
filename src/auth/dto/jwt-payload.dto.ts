@@ -1,4 +1,4 @@
-import { AuthMethod } from '../../members/entities/member.entity';
+import { AuthMethod } from '../../members/entities/enums/auth-method.enum';
 
 export class JwtPayloadDto {
     memberId: number;

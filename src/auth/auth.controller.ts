@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { AuthResponseDto } from './dto/auth.response'; 
+import { AuthResponseDto } from './dto/auth.response';
 import { GoogleProfileDto } from './dto/google-profile.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -19,6 +19,9 @@ import { SignupDto } from './dto/signup.dto';
 import { NicknameUpdate } from '../members/dto/nickname.update';
 import { MessageResponse } from './dto/message.response';
 import { PasswordChangeDto } from './dto/password-change.dto';
+import { KakaoAuthGuard } from './guards/kakao-auth.guard';
+import { KakaoProfileDto } from './dto/kakao-profile.dto';
+
 
 @Controller('auth')
 export class AuthController {
@@ -40,26 +43,62 @@ export class AuthController {
     @Res() response: Response,
   ): Promise<void> {
     const result = await this.authService.googleLogin(request.user);
-    const frontendUrl = (
-      process.env.FRONTEND_URL ?? 'http://localhost:5173'
-    ).replace(/\/$/, '');
-    const callbackUrl = new URL(`${frontendUrl}/auth/callback`);
-    callbackUrl.searchParams.set('accessToken', result.accessToken);
-    callbackUrl.searchParams.set('member', JSON.stringify(result.member));
-    callbackUrl.searchParams.set('isNewMember', String(result.isNewMember));
 
-    response.redirect(callbackUrl.toString());
+    this.redirectToFrontend(response, result);
+}
+
+
+  @Get('kakao')
+  @UseGuards(KakaoAuthGuard)
+  kakaoLogin(): void {
+    return;
   }
+
+  @Get('login/oauth2/code/kakao')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoCallback(
+    @Req()
+    request: Request & {
+      user: KakaoProfileDto;
+    },
+    @Res() response: Response,
+  ): Promise<void> {
+    const result = await this.authService.kakaoLogin(request.user);
+
+    this.redirectToFrontend(response, result);
+  }
+
+  // @Get('apple')
+  // @UseGuards(AppleAuthGuard)
+  // appleLogin(): void {
+  //   return;
+  // }
+  //
+  // @Post('login/oauth2/code/apple')
+  // @UseGuards(AppleAuthGuard)
+  // async appleCallback(
+  //   @Req()
+  //   request: Request & {
+  //     user: AppleProfileDto;
+  //   },
+  //   @Res() response: Response,
+  // ): Promise<void> {
+  //   const result = await this.authService.appleLogin(request.user);
+  //
+  //   this.redirectToFrontend(response, result);
+  // }
 
   @Post('signup')
   signup(@Body() body: SignupDto): Promise<AuthResponseDto> {
     return this.authService.signup(body.email, body.password);
   }
 
+
   @Post('login')
   async login(@Body() body: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(body.email, body.password);
   }
+
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
@@ -98,5 +137,28 @@ export class AuthController {
       body.currentPassword,
       body.newPassword,
     );
+  }
+
+
+
+
+  private redirectToFrontend(
+    response: Response,
+    result: AuthResponseDto,
+  ): void {
+    const frontendUrl = (
+      process.env.FRONTEND_URL ?? 'http://localhost:5173'
+    ).replace(/\/$/, '');
+
+    const callbackUrl = new URL(`${frontendUrl}/auth/callback`);
+
+    callbackUrl.searchParams.set('accessToken', result.accessToken);
+    callbackUrl.searchParams.set('member', JSON.stringify(result.member));
+    callbackUrl.searchParams.set(
+      'isNewMember',
+      String(result.isNewMember),
+    );
+
+    response.redirect(callbackUrl.toString());
   }
 }

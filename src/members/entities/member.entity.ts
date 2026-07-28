@@ -5,15 +5,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ConnectionStatus } from './enums/connectionStatus.enum';
 
-//회원 인증 방식
-//local은 그냥 로그인, 구글은 구글 로그인
-export type AuthMethod = 'local' | 'google';
+import { ConnectionStatus } from './enums/connectionStatus.enum';
+import { AuthMethod } from './enums/auth-method.enum';
 
 @Entity('members')
 export class Member {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,13 +20,19 @@ export class Member {
   @Column({ type: 'varchar', length: 255, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   password: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
+  kakaoId: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
+  appleId: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   googleId: string | null;
 
-  @Column({ type: 'enum', enum: ['local', 'google'], default: 'google' })
+  @Column({ type: 'enum', enum: ['local', 'google', 'apple', 'kakao'] })
   authMethod: AuthMethod;
 
   @Column({

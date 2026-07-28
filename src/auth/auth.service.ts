@@ -8,9 +8,12 @@ import { ConnectionStatus } from '../members/entities/enums/connectionStatus.enu
 import { AuthMemberResponseDto } from './dto/auth.member.response';
 import { AuthResponseDto } from './dto/auth.response';
 import { GoogleProfileDto } from './dto/google-profile.dto';
+import { AppleProfileDto } from './dto/apple-profile.dto';
+import { KakaoProfileDto } from './dto/kakao-profile.dto';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { MemberService } from '../members/member.service';
 import { MessageResponse } from './dto/message.response';
+import { AuthMethod } from 'src/members/entities/enums/auth-method.enum';
 
 @Injectable()
 export class AuthService {
@@ -110,6 +113,42 @@ export class AuthService {
     };
   }
 
+  //애플 로그인
+  async appleLogin(appleProfile: AppleProfileDto): Promise<AuthResponseDto> {
+    const { member, isNewMember } =
+      await this.memberService.findOrCreateAppleMember(appleProfile);
+    const accessToken = await this.signToken(
+      member.id,
+      member.email,
+      member.nickname,
+      member.authMethod,
+    );
+
+    return {
+      accessToken,
+      member: this.toMemberResponse(member),
+      isNewMember,
+    };
+  }
+
+  //카카오 로그인
+  async kakaoLogin(kakaoProfile: KakaoProfileDto): Promise<AuthResponseDto> {
+    const { member, isNewMember } =
+      await this.memberService.findOrCreateKakaoMember(kakaoProfile);
+    const accessToken = await this.signToken(
+      member.id,
+      member.email,
+      member.nickname,
+      member.authMethod,
+    );
+
+    return {
+      accessToken,
+      member: this.toMemberResponse(member),
+      isNewMember,
+    };
+  }
+
   //닉네임 변경
   async updateNickname(
     memberId: number,
@@ -148,7 +187,7 @@ export class AuthService {
     memberId: number,
     email: string,
     nickname: string | null,
-    authMethod: 'local' | 'google',
+    authMethod: AuthMethod,
   ): Promise<string> {
     const payload: JwtPayloadDto = {
       memberId,
@@ -166,7 +205,7 @@ export class AuthService {
     nickname: string | null;
     email: string;
     googleId: string | null;
-    authMethod: 'local' | 'google';
+    authMethod: AuthMethod;
     connectionStatus: ConnectionStatus;
     introduction: string | null;
     tokenBalance: number;

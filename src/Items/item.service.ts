@@ -19,7 +19,11 @@ export class ItemService {
         private readonly memberService: MemberService,
     ) {}
 
-    async create(memberId: number, request: SellRequest): Promise<ItemResponse> {
+    async create(
+        memberId: number,
+        request: SellRequest,
+        imageUrls: string[],
+    ): Promise<ItemResponse> {
         const seller = await this.memberService.findById(memberId);
         
         //상품 객체 생성 및 저장
@@ -33,9 +37,9 @@ export class ItemService {
                 stock: request.stock,
                 tags: request.tags,
                 directTrade: request.directTrade,
-            },
+        },
         seller,
-        request.imageUrls,
+        imageUrls,
     );
         return this.toResponse(item);
     }
@@ -113,7 +117,7 @@ export class ItemService {
             },
             images: (item.images ?? []).map((image) => ({
                 id: image.id,
-                url: image.url,
+                url: this.toPublicImageUrl(image.url),
             })),
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
@@ -125,6 +129,19 @@ export class ItemService {
         if(item.sellerId !== memberId) {
             throw new ForbiddenException("판매자만 상품을 수정할 수 있습니다.")
         }
+    }
+
+    private toPublicImageUrl(imageUrl: string): string {
+        if (/^https?:\/\//i.test(imageUrl)) {
+            return imageUrl;
+        }
+
+        const publicApiUrl = (
+            process.env.PUBLIC_API_URL
+            ?? `http://localhost:${process.env.PORT ?? 3000}`
+        ).replace(/\/$/, '');
+
+        return `${publicApiUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
     }
 
     

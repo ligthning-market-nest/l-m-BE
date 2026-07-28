@@ -1,6 +1,8 @@
+import { Type } from 'class-transformer';
 import { IsInt, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
 export class MessageSendRequest {
+    @Type(() => Number)
     @IsInt()
     @Min(1)
     chatroomId: number;

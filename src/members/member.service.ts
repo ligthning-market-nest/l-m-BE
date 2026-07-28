@@ -10,11 +10,23 @@ import { ProfileResponse } from './dto/profile.response';
 import { ConnectionStatus } from './entities/enums/connectionStatus.enum';
 import { Member } from './entities/member.entity';
 import { MemberRepository } from './member.repository';
+import { AuthMethod } from './entities/enums/auth-method.enum';
 
 export type GoogleProfile = {
     googleId: string;
     email: string;
 };
+
+export type AppleProfile = {
+    appleId: string;
+    email: string | null;
+};
+
+  export type KakaoProfile = {
+    kakaoId: string;
+    email: string | null;
+};
+
 
 @Injectable()
 export class MemberService {
@@ -33,7 +45,7 @@ export class MemberService {
                 nickname: null,
                 password: hashedPassword,
                 googleId: null,
-                authMethod: 'local',
+                authMethod: AuthMethod.LOCAL,
                 connectionStatus: ConnectionStatus.ONLINE,
                 introduction: null,
                 tokenBalance: 1000,
@@ -55,7 +67,7 @@ export class MemberService {
             //구글 유저면 값 다 넣고, 저장
         if (googleMember) {
             googleMember.googleId = googleProfile.googleId;
-            googleMember.authMethod = 'google';
+            googleMember.authMethod = AuthMethod.GOOGLE;
             googleMember.connectionStatus = ConnectionStatus.ONLINE;
 
             const member = await this.memberRepository.save(googleMember);
@@ -63,7 +75,7 @@ export class MemberService {
         }
 
         const password = await bcrypt.hash(randomUUID(), 10);   //비번 해시
-        
+
         //만들기 + 저장
         const member = await this.memberRepository.save(
             this.memberRepository.create({
@@ -71,7 +83,7 @@ export class MemberService {
                 nickname: null,
                 googleId: googleProfile.googleId,
                 password,
-                authMethod: 'google',
+                authMethod: AuthMethod.GOOGLE,
                 connectionStatus: ConnectionStatus.ONLINE,
                 introduction: null,
                 tokenBalance: 1000,
@@ -82,6 +94,125 @@ export class MemberService {
 
         return { member, isNewMember: true };
     }
+
+    async findOrCreateAppleMember(
+        appleProfile: AppleProfile,
+      ): Promise<{ member: Member; isNewMember: boolean }> {
+        const appleMember = await this.memberRepository.findByAppleId(
+          appleProfile.appleId,
+        );
+
+        if (appleMember) {
+          appleMember.connectionStatus = ConnectionStatus.ONLINE;
+
+          const member = await this.memberRepository.save(appleMember);
+
+          return {
+            member,
+            isNewMember: false,
+          };
+        }
+
+        if (!appleProfile.email) {
+          throw new BadRequestException(
+            'Apple에서 이메일 정보를 제공하지 않았습니다.',
+          );
+        }
+
+        const emailMember = await this.memberRepository.findByEmail(
+          appleProfile.email,
+        );
+
+        if (emailMember) {
+          throw new ConflictException(
+            '이미 다른 로그인 방식으로 가입된 이메일입니다.',
+          );
+        }
+
+        const password = await bcrypt.hash(randomUUID(), 10);
+
+        const member = await this.memberRepository.save(
+          this.memberRepository.create({
+            email: appleProfile.email,
+            nickname: null,
+            password,
+            googleId: null,
+            appleId: appleProfile.appleId,
+            authMethod: AuthMethod.APPLE,
+            connectionStatus: ConnectionStatus.ONLINE,
+            introduction: null,
+            tokenBalance: 1000,
+            nicknameUpdatedAt: null,
+            introductionUpdatedAt: null,
+          }),
+        );
+
+        return {
+          member,
+          isNewMember: true,
+        };
+      }
+
+
+      async findOrCreateKakaoMember(
+        kakaoProfile: KakaoProfile,
+      ): Promise<{ member: Member; isNewMember: boolean }> {
+        const kakaoMember = await this.memberRepository.findByKakaoId(
+          kakaoProfile.kakaoId,
+        );
+
+        if (kakaoMember) {
+          kakaoMember.connectionStatus = ConnectionStatus.ONLINE;
+          kakaoMember.email =
+            kakaoMember.email?.trim() ||
+            `kakao-${kakaoProfile.kakaoId}@lightning-market.local`;
+
+          const member = await this.memberRepository.save(kakaoMember);
+
+          return {
+            member,
+            isNewMember: false,
+          };
+        }
+
+        const email =
+          kakaoProfile.email?.trim() ||
+          `kakao-${kakaoProfile.kakaoId}@lightning-market.local`;
+
+        const emailMember = await this.memberRepository.findByEmail(email);
+
+        if (emailMember) {
+          throw new ConflictException(
+            '이미 다른 로그인 방식으로 가입된 이메일입니다.',
+          );
+        }
+
+        const password = await bcrypt.hash(randomUUID(), 10);
+
+        const member = await this.memberRepository.save(
+          this.memberRepository.create({
+            email,
+            nickname: null,
+            password,
+            googleId: null,
+            appleId: null,
+            kakaoId: kakaoProfile.kakaoId,
+            authMethod: AuthMethod.KAKAO,
+            connectionStatus: ConnectionStatus.ONLINE,
+            introduction: null,
+            tokenBalance: 1000,
+            nicknameUpdatedAt: null,
+            introductionUpdatedAt: null,
+          }),
+        );
+
+        return {
+          member,
+          isNewMember: true,
+        };
+      }
+
+
 
     async verifyPassword(member: Member, rawPassword: string): Promise<boolean> {
         return bcrypt.compare(rawPassword, member.password);
@@ -223,6 +354,13 @@ export class MemberService {
 
         member.password = await bcrypt.hash(newPassword, 10);
         await this.memberRepository.save(member);
+    }
+
+    async chargeTokens(memberId: number, amount: number): Promise<ProfileResponse> {
+        const member = await this.findById(memberId);
+        member.tokenBalance += amount;
+        await this.memberRepository.save(member);
+        return this.profile(memberId, memberId);
     }
 
     async findById(id: number): Promise<Member> {

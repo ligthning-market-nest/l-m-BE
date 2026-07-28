@@ -7,6 +7,7 @@ import { Item } from './entities/item.entity';
 import { ItemController } from './item.controller';
 import { ItemRepository } from './item.repository';
 import { ItemService } from './item.service';
+import { UploadedFilesCleanupInterceptor } from './interceptors/uploaded-files-cleanup.interceptor';
 
 @Module({
     imports: [
@@ -15,7 +16,11 @@ import { ItemService } from './item.service';
         MemberModule,
     ],
     controllers: [ItemController],
-    providers: [ItemRepository, ItemService],
+    providers: [
+        ItemRepository,
+        ItemService,
+        UploadedFilesCleanupInterceptor,
+    ],
     exports: [ItemRepository, ItemService, TypeOrmModule],
 })
 export class ItemModule {}

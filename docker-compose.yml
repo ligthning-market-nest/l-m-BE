@@ -1,5 +1,6 @@
 services:
   mysql:
+    container_name: lightning-market-mysql
     image: mysql:8.4
     restart: unless-stopped
     environment:
@@ -21,6 +22,7 @@ services:
       start_period: 20s
 
   nestjs:
+    container_name: lightning-market-nestjs
     build:
       context: .
       dockerfile: dockerfile
@@ -37,9 +39,12 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-lightning_market}
     ports:
       - "${PORT:-3000}:3000"
+    volumes:
+      - item_uploads:/app/uploads
     depends_on:
       mysql:
         condition: service_healthy
 
 volumes:
   mysql_data:
+  item_uploads:

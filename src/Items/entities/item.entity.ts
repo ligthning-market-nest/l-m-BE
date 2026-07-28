@@ -8,7 +8,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Member } from '../../members/entities/member.entity';
+import { Member } from 'src/members/entities/member.entity';
 import { Category } from './category.enum';
 import { ItemImage } from './image.entity';
 import { Status } from './status.enum';

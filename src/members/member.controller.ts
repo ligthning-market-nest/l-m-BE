@@ -14,6 +14,7 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProfileResponse } from './dto/profile.response';
 import { ProfileUpdate } from './dto/profile.update';
+import { TokenChargeRequest } from './dto/token-charge.request';
 import { MemberService } from './member.service';
 
 type AuthenticatedRequest = Request & { user: { memberId: number } };
@@ -47,6 +48,17 @@ export class MemberController {
         return this.memberService.updateProfile(
             request.user.memberId,
             body.introduction,
+        );
+    }
+
+    @Patch('token')
+    chargeToken(
+        @Req() request: AuthenticatedRequest,
+        @Body() body: TokenChargeRequest,
+    ): Promise<ProfileResponse> {
+        return this.memberService.chargeTokens(
+            request.user.memberId,
+            body.amount,
         );
     }
 

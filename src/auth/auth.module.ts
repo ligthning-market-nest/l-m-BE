@@ -9,6 +9,7 @@ import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { KakaoStrategy } from './strategies/kakao.strategy';
 
 @Module({
     imports: [
@@ -30,7 +31,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService, GoogleStrategy, JwtStrategy, GoogleAuthGuard, JwtAuthGuard],
+    providers: [AuthService, GoogleStrategy, JwtStrategy, GoogleAuthGuard, JwtAuthGuard, KakaoStrategy],
     exports: [AuthService, JwtAuthGuard, JwtModule],
 })
 export class AuthModule {}
