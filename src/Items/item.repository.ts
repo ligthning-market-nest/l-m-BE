@@ -49,7 +49,7 @@ export class ItemRepository {
 
     findAll(): Promise<Item[]> {
         return this.itemRepository.find({
-            relations: {seller: true, images: true },
+            relations: { seller: true, images: true, category: true },
             order: { createdAt: 'DESC' },
         });
     }
@@ -58,7 +58,7 @@ export class ItemRepository {
     findById(id: number): Promise<Item | null> {
         return this.itemRepository.findOne({
             where: { id },
-            relations: { seller: true, images: true },
+            relations: { seller: true, images: true, category: true },
         })
     }
 

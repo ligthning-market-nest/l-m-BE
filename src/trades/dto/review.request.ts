@@ -7,7 +7,7 @@ export class ReviewRequest {
     rating: number;
 
     @IsString()
-    @MinLength(1)
+    @MinLength(10)
     @MaxLength(1000)
     review: string;
 }

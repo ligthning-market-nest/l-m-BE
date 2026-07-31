@@ -2,7 +2,6 @@ import {
     ArrayMaxSize,
     IsArray,
     IsBoolean,
-    IsEnum,
     IsInt,
     IsString,
     Max,
@@ -11,7 +10,6 @@ import {
     MinLength,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { Category } from '../entities/category.enum';
 import { Status } from '../entities/status.enum';
 
 function parseJsonArray(value: unknown): unknown {
@@ -60,8 +58,10 @@ export class SellRequest {
     @Max(2_147_483_647)
     price: number;
 
-    @IsEnum(Category)
-    category: Category;
+    @Type(() => Number)
+    @IsInt()
+    @Min(1)
+    categoryId: number;
 
     @Type(() => Number)
     @IsInt()

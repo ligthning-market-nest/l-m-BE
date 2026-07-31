@@ -9,9 +9,9 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Member } from 'src/members/entities/member.entity';
-import { Category } from './category.enum';
 import { ItemImage } from './image.entity';
 import { Status } from './status.enum';
+import { Category } from './category.entity';
 
 @Entity('items')
 export class Item {
@@ -30,7 +30,11 @@ export class Item {
     @Column({ type: 'int', nullable: false, default: 0 })
     price: number;
 
-    @Column({ type: 'enum', enum: Category, nullable: false })
+    @Column({ name: 'category_id', type: 'bigint', nullable: false })
+    categoryId: number;
+
+    @ManyToOne(() => Category, { nullable: false, onDelete: 'RESTRICT' })
+    @JoinColumn({ name: 'category_id' })
     category: Category;
 
     @Column({ type: 'int', nullable: false })

@@ -1,4 +1,4 @@
-import { Category } from '../entities/category.enum';
+import { Category } from '../entities/category.entity';
 import { Status } from '../entities/status.enum';
 
 

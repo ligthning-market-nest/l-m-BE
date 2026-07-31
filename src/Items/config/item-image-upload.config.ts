@@ -5,7 +5,7 @@ import { diskStorage } from 'multer';
 import { join } from 'path';
 
 export const ITEM_IMAGE_MAX_COUNT = 10;
-export const ITEM_IMAGE_MAX_SIZE = 5 * 1024 * 1024;
+export const ITEM_IMAGE_MAX_SIZE = 20 * 1024 * 1024;
 export const ITEM_IMAGE_DIRECTORY = join(process.cwd(), 'uploads', 'items');
 
 const allowedMimeTypes = new Set([

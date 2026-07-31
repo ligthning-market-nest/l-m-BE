@@ -3,7 +3,6 @@ import {
     ArrayMinSize,
     IsArray,
     IsBoolean,
-    IsEnum,
     IsInt,
     IsOptional,
     IsString,
@@ -13,7 +12,6 @@ import {
     MinLength,
 } from 'class-validator';
 
-import { Category } from '../entities/category.enum';
 import { Status } from '../entities/status.enum';
 
 export class SaleUpdateRequest {
@@ -50,8 +48,9 @@ export class SaleUpdateRequest {
     stock?: number;
 
     @IsOptional()
-    @IsEnum(Category)
-    category?: Category;
+    @IsInt()
+    @Min(1)
+    categoryId?: number;
 
 
     @IsOptional()
